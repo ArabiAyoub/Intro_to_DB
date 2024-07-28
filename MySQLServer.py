@@ -5,31 +5,30 @@ def create_database(connection, query):
     cursor = connection.cursor()
     try:
         cursor.execute(query)
-        print("Database 'alx_book_store' created successfully!")
-    except Error as err:
-        print("Error: {}".format(err))
+        print("Database created successfully!")
+    except mysql.connector.Error as err:  # Specific exception
+        print(f"Error: {err}")
     finally:
         cursor.close()
 
 def main():
-    # Connection parameters - adjust as necessary
-    config = {
-        'host': 'localhost',
-        'user': 'root',
-        'password': 'your_password'
-    }
-    
+    conn = None
     try:
-        # Connect to the MySQL server
-        conn = mysql.connector.connect(**config)
+        conn = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='your_password'
+        )
+
         if conn.is_connected():
             print('Connected to MySQL server')
-            # Create database if it does not exist
             create_database(conn, "CREATE DATABASE IF NOT EXISTS alx_book_store")
-    except Error as e:
-        print("Error: {}".format(e))
+        else:
+            print('Failed to connect')
+    except mysql.connector.Error as e:  # Specific exception
+        print(f"Error: {e}")
     finally:
-        if conn.is_connected():
+        if conn is not None and conn.is_connected():
             conn.close()
             print('Database connection closed.')
 
